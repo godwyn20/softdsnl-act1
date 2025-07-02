@@ -27,7 +27,7 @@ A simple API that predicts whether a flower is **Setosa**, **Versicolor**, or **
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/rmanabat-hau/softdsnl-act1.git
+git clone https://github.com/godwyn20/softdsnl-act1.git
 cd softdsnl-act1
 ```
 
@@ -57,108 +57,21 @@ ml_api_project/
 │   ├── apps.py
 │   ├── models.py
 │   ├── tests.py
-│   ├── views.py          <-- (You will create this)
-│   └── urls.py           <-- (You will create this)
+│   ├── views.py          
+│   └── urls.py         
 ├── ml_api_project/
 │   ├── __init__.py
 │   ├── asgi.py
 │   ├── settings.py
-│   ├── urls.py           <-- (You will modify this)
+│   ├── urls.py 
 │   └── wsgi.py
 ├── manage.py
 ```
 
 ---
 
-## 🛠️ Step-by-Step Instructions
 
-### 1. Create Django Project and App
-
-```bash
-django-admin startproject ml_api_project .
-python manage.py startapp ml_api
-```
-
-### 2. Configure Installed Apps
-
-Open `ml_api_project/settings.py` and add the following to `INSTALLED_APPS`:
-
-```python
-INSTALLED_APPS = [
-    # Default Django apps...
-    'rest_framework',
-    'ml_api',
-]
-```
-
----
-
-### 3. Create the Machine Learning API View
-
-Open `ml_api/views.py` and add the following code:
-
-```python
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
-from sklearn.datasets import load_iris
-from sklearn.ensemble import RandomForestClassifier
-import numpy as np
-
-# Load the Iris dataset and train the model when the server starts
-iris = load_iris()
-model = RandomForestClassifier()
-model.fit(iris.data, iris.target)
-
-class PredictIris(APIView):
-    def post(self, request):
-        try:
-            data = request.data
-            sepal_length = float(data.get('sepal_length'))
-            sepal_width = float(data.get('sepal_width'))
-            petal_length = float(data.get('petal_length'))
-            petal_width = float(data.get('petal_width'))
-
-            input_data = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
-            prediction = model.predict(input_data)
-            predicted_class = iris.target_names[prediction][0]
-
-            return Response({'prediction': predicted_class})
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-```
-
----
-
-### 4. Set Up URL Routing
-
-#### Create `ml_api/urls.py`
-
-```python
-from django.urls import path
-from .views import PredictIris
-
-urlpatterns = [
-    path('predict/', PredictIris.as_view(), name='predict-iris'),
-]
-```
-
-#### Edit `ml_api_project/urls.py` to include the app routes
-
-```python
-from django.contrib import admin
-from django.urls import path, include
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('ml_api.urls')),
-]
-```
-
----
-
-### 5. Run the Server
+### 4. Run the Server
 
 ```bash
 python manage.py runserver
